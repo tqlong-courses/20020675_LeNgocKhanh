@@ -86,17 +86,68 @@ def depthFirstSearch(problem: SearchProblem):
     print("Is the start a goal?", problem.isGoalState(problem.getStartState()))
     print("Start's successors:", problem.getSuccessors(problem.getStartState()))
     """
-    "*** YOUR CODE HERE ***"
+    stack = util.Stack()  # Create an empty stack
+    stack.push((problem.getStartState(), []))  # Push the start state and an empty list of actions onto the stack
+    visited = set()  # Create an empty set to store visited states
+
+    while not stack.isEmpty():
+        state, actions = stack.pop()  # Pop a state and its corresponding actions from the stack
+
+        if problem.isGoalState(state):  # If the state is the goal state, return the list of actions
+            return actions
+
+        if state not in visited:  # If the state has not been visited
+            visited.add(state)  # Mark the state as visited
+            successors = problem.getSuccessors(state)  # Get the successors of the state
+
+            for successor, action, _ in successors:
+                stack.push((successor, actions + [action]))  # Push the successor state and the new action onto the stack
+
+    return []  # Return an empty list if no path to the goal state is found
     util.raiseNotDefined()
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
-    "*** YOUR CODE HERE ***"
+    queue = util.Queue()  # Create an empty queue
+    queue.push((problem.getStartState(), []))  # Push the start state and an empty list of actions onto the queue
+    visited = set()  # Create an empty set to store visited states
+
+    while not queue.isEmpty():
+        state, actions = queue.pop()  # Pop a state and its corresponding actions from the queue
+
+        if problem.isGoalState(state):  # If the state is the goal state, return the list of actions
+            return actions
+
+        if state not in visited:  # If the state has not been visited
+            visited.add(state)  # Mark the state as visited
+            successors = problem.getSuccessors(state)  # Get the successors of the state
+
+            for successor, action, _ in successors:
+                queue.push((successor, actions + [action]))  # Push the successor state and the new action onto the queue
+
+    return []  # Return an empty list if no path to the goal state is found
     util.raiseNotDefined()
 
 def uniformCostSearch(problem: SearchProblem):
-    """Search the node of least total cost first."""
-    "*** YOUR CODE HERE ***"
+    priorityQueue = util.PriorityQueue()  # Create an empty priority queue
+    priorityQueue.push((problem.getStartState(), [], 0), 0)  # Push the start state, an empty list of actions, and the cost as the priority
+    visited = set()  # Create an empty set to store visited states
+
+    while not priorityQueue.isEmpty():
+        state, actions, cost = priorityQueue.pop()  # Pop a state, its corresponding actions, and the cost from the priority queue
+
+        if problem.isGoalState(state):  # If the state is the goal state, return the list of actions
+            return actions
+
+        if state not in visited:  # If the state has not been visited
+            visited.add(state)  # Mark the state as visited
+            successors = problem.getSuccessors(state)  # Get the successors of the state
+
+            for successor, action, stepCost in successors:
+                totalCost = cost + stepCost
+                priorityQueue.push((successor, actions + [action], totalCost), totalCost)  # Push the successor state, the new action, and the total cost as the priority
+
+    return []  # Return an empty list if no path to the goal state is found
     util.raiseNotDefined()
 
 def nullHeuristic(state, problem=None):
@@ -108,7 +159,26 @@ def nullHeuristic(state, problem=None):
 
 def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
-    "*** YOUR CODE HERE ***"
+    priorityQueue = util.PriorityQueue()  # Create an empty priority queue
+    priorityQueue.push((problem.getStartState(), [], 0), 0)  # Push the start state, an empty list of actions, and the cost as the priority
+    visited = set()  # Create an empty set to store visited states
+
+    while not priorityQueue.isEmpty():
+        state, actions, cost = priorityQueue.pop()  # Pop a state, its corresponding actions, and the cost from the priority queue
+
+        if problem.isGoalState(state):  # If the state is the goal state, return the list of actions
+            return actions
+
+        if state not in visited:  # If the state has not been visited
+            visited.add(state)  # Mark the state as visited
+            successors = problem.getSuccessors(state)  # Get the successors of the state
+
+            for successor, action, stepCost in successors:
+                totalCost = cost + stepCost
+                heuristicCost = totalCost + heuristic(successor, problem)  # Calculate the heuristic cost
+                priorityQueue.push((successor, actions + [action], totalCost), heuristicCost)  # Push the successor state, the new action, and the total cost + heuristic as the priority
+
+    return []  # Return an empty list if no path to the goal state is found
     util.raiseNotDefined()
 
 
